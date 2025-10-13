@@ -1,5 +1,10 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'mcr.microsoft.com/dotnet/sdk:8.0'
+            args '-u root:root'
+        }
+    }
 
     environment {
         PROJECT_PATH = 'WebApplicationTest/WebApplicationTest'
@@ -9,57 +14,29 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                echo '📥 Cloning repository...'
                 git branch: 'main', url: 'https://github.com/mohammadhasani669/test-repo.git'
             }
         }
-
         stage('Restore') {
             steps {
-                echo '📦 Restoring NuGet packages...'
                 dir("${PROJECT_PATH}") {
                     sh 'dotnet restore'
                 }
             }
         }
-
         stage('Build') {
             steps {
-                echo '🏗️ Building project...'
                 dir("${PROJECT_PATH}") {
                     sh 'dotnet build --configuration Release'
                 }
             }
         }
-
         stage('Publish') {
             steps {
-                echo '🚀 Publishing project...'
                 dir("${PROJECT_PATH}") {
                     sh "dotnet publish -c Release -o ${PUBLISH_DIR}"
                 }
             }
-        }
-
-        stage('Deploy') {
-            when {
-                expression { env.DEPLOY_SERVER != null }
-            }
-            steps {
-                echo '📡 Deploying to remote server...'
-                sshagent(['deploy-server-credential']) {
-                    sh "scp -r ${PROJECT_PATH}/${PUBLISH_DIR}/* ${DEPLOY_USER}@${DEPLOY_SERVER}:/var/www/webapp/"
-                }
-            }
-        }
-    }
-
-    post {
-        success {
-            echo '✅ Build and publish completed successfully.'
-        }
-        failure {
-            echo '❌ Build failed!'
         }
     }
 }
