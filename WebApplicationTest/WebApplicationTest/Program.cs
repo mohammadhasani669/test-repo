@@ -20,6 +20,6 @@ app.UseHttpsRedirection(); // A
 
 app.UseAuthorization();
 
-app.MapControllers(); // C
+app.MapControllers();
 
 app.Run();
