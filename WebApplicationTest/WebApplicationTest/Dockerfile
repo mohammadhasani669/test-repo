@@ -19,6 +19,8 @@ COPY --from=build /app .
 EXPOSE 5283
 
 ENV ASPNETCORE_URLS=http://+:5283
+ENV ASPNETCORE_ENVIRONMENT=Development
+
 
 # دستور اجرا
 ENTRYPOINT ["dotnet", "WebApplicationTest.dll"]
