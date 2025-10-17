@@ -18,5 +18,7 @@ COPY --from=build /app .
 # پورت پیش‌فرض ASP.NET Core
 EXPOSE 5283
 
+ENV ASPNETCORE_URLS=http://+:5283
+
 # دستور اجرا
 ENTRYPOINT ["dotnet", "WebApplicationTest.dll"]
